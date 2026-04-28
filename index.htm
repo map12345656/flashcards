@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlashFlow | Учене с flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <nav class="topbar">
+        <div class="brand">
+          <span class="brand-mark">F</span>
+          <div>
+            <p class="eyebrow">Smart Study Space</p>
+            <h1>FlashFlow</h1>
+          </div>
+        </div>
+        <button class="ghost-button" id="reset-app" type="button">Reset Demo</button>
+      </nav>
+
+      <section class="hero-grid">
+        <div class="hero-copy">
+          <p class="hero-kicker">Учи по-бързо, повтаряй по-умно</p>
+          <h2>Сайт за учене с flashcards, който следи реалния ти прогрес.</h2>
+          <p class="hero-text">
+            Създавай тестета, обръщай карти, маркирай трудните въпроси и виж
+            колко добре върви подготовката ти всеки ден.
+          </p>
+          <div class="hero-actions">
+            <button class="primary-button" id="jump-to-create" type="button">Създай тесте</button>
+            <button class="secondary-button" id="jump-to-study" type="button">Започни учене</button>
+          </div>
+          <div class="hero-stats" id="hero-stats"></div>
+        </div>
+
+        <aside class="hero-panel">
+          <div class="panel-card accent-card">
+            <p>Днешен фокус</p>
+            <strong id="focus-deck">JavaScript Basics</strong>
+            <span id="focus-count">8 карти за преговор</span>
+          </div>
+          <div class="panel-card">
+            <p>Streak</p>
+            <strong id="streak-value">0 дни</strong>
+            <span>Всеки завършен study session вдига серията.</span>
+          </div>
+          <div class="panel-card">
+            <p>Трудни карти</p>
+            <strong id="hard-total">0</strong>
+            <span>Преговор само на въпросите, които те спъват.</span>
+          </div>
+        </aside>
+      </section>
+    </header>
+
+    <main class="content-grid">
+      <section class="dashboard-card create-card" id="create-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">New Deck</p>
+            <h3>Създай ново тесте</h3>
+          </div>
+          <span class="section-badge">MVP</span>
+        </div>
+
+        <form id="deck-form" class="deck-form">
+          <label>
+            Име на тестето
+            <input id="deck-name" name="deckName" type="text" maxlength="40" placeholder="Например: English Verbs" required>
+          </label>
+          <label>
+            Категория
+            <input id="deck-category" name="deckCategory" type="text" maxlength="24" placeholder="Language, Coding, History..." required>
+          </label>
+          <label>
+            Цвят
+            <select id="deck-color" name="deckColor">
+              <option value="sun">Sun</option>
+              <option value="mint">Mint</option>
+              <option value="sky">Sky</option>
+              <option value="coral">Coral</option>
+            </select>
+          </label>
+          <button class="primary-button" type="submit">Добави тесте</button>
+        </form>
+      </section>
+
+      <section class="dashboard-card deck-list-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Dashboard</p>
+            <h3>Твоите тестета</h3>
+          </div>
+          <span class="section-badge" id="deck-count-badge">0 тестета</span>
+        </div>
+        <div class="deck-grid" id="deck-grid"></div>
+      </section>
+
+      <section class="dashboard-card deck-detail-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Deck Details</p>
+            <h3 id="detail-title">Избери тесте</h3>
+          </div>
+          <div class="detail-actions">
+            <button class="secondary-button small-button" id="study-selected" type="button">Учи</button>
+            <button class="ghost-button small-button" id="delete-selected" type="button">Изтрий</button>
+          </div>
+        </div>
+
+        <div id="deck-detail-empty" class="empty-state">
+          Избери тесте отляво, за да добавяш карти и да стартираш учене.
+        </div>
+
+        <div id="deck-detail" class="hidden">
+          <form id="card-form" class="card-form">
+            <label>
+              Въпрос
+              <textarea id="card-question" rows="2" maxlength="140" placeholder="Напиши въпроса" required></textarea>
+            </label>
+            <label>
+              Отговор
+              <textarea id="card-answer" rows="3" maxlength="220" placeholder="Напиши отговора" required></textarea>
+            </label>
+            <button class="primary-button" type="submit">Добави карта</button>
+          </form>
+
+          <div class="filter-row">
+            <button class="filter-chip active" data-filter="all" type="button">Всички</button>
+            <button class="filter-chip" data-filter="hard" type="button">Трудни</button>
+            <button class="filter-chip" data-filter="known" type="button">Научени</button>
+          </div>
+
+          <div class="card-list" id="card-list"></div>
+        </div>
+      </section>
+
+      <section class="dashboard-card study-card" id="study-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Study Mode</p>
+            <h3>Преговор карта по карта</h3>
+          </div>
+          <span class="section-badge" id="study-progress-label">0 / 0</span>
+        </div>
+
+        <div id="study-empty" class="empty-state">
+          Избери тесте и натисни "Учи", за да започнеш session.
+        </div>
+
+        <div id="study-panel" class="hidden">
+          <div class="study-header">
+            <div>
+              <strong id="study-deck-title"></strong>
+              <p id="study-deck-meta"></p>
+            </div>
+            <button class="ghost-button small-button" id="flip-card" type="button">Обърни</button>
+          </div>
+
+          <div class="flashcard-shell">
+            <button class="flashcard" id="flashcard" type="button" aria-label="Flashcard">
+              <div class="flashcard-face flashcard-front">
+                <span>Въпрос</span>
+                <h4 id="study-question"></h4>
+              </div>
+              <div class="flashcard-face flashcard-back">
+                <span>Отговор</span>
+                <p id="study-answer"></p>
+              </div>
+            </button>
+          </div>
+
+          <div class="study-actions">
+            <button class="danger-button" id="mark-hard" type="button">Не знам</button>
+            <button class="primary-button" id="mark-known" type="button">Знам</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard-card progress-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Progress</p>
+            <h3>Общ поглед върху напредъка</h3>
+          </div>
+          <span class="section-badge">Live</span>
+        </div>
+
+        <div class="progress-metrics" id="progress-metrics"></div>
+        <div class="progress-bars" id="progress-bars"></div>
+      </section>
+    </main>
+  </div>
+
+  <template id="deck-card-template">
+    <article class="deck-card">
+      <div class="deck-card-top">
+        <span class="deck-chip"></span>
+        <button class="icon-button" type="button" aria-label="Select deck">+</button>
+      </div>
+      <h4 class="deck-name"></h4>
+      <p class="deck-category"></p>
+      <div class="deck-meta"></div>
+    </article>
+  </template>
+
+  <template id="card-item-template">
+    <article class="card-item">
+      <div class="card-copy">
+        <h4 class="card-question"></h4>
+        <p class="card-answer"></p>
+      </div>
+      <div class="card-meta">
+        <span class="status-pill"></span>
+        <button class="ghost-button small-button toggle-hard" type="button">Toggle Hard</button>
+        <button class="ghost-button small-button delete-card" type="button">Delete</button>
+      </div>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
